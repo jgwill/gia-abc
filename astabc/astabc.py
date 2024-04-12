@@ -49,8 +49,9 @@ def correct(filename, abc=25, output_filename=None):
 
 def main():
     parser = argparse.ArgumentParser(description='Image Brightness and Contrast Correction\nby Guillaume D. Isabelle, 2024\n')
+    
     parser.add_argument('filename', type=str, help='input image filename')
-    parser.add_argument('-a','--abc', type=int, default=15, help='automatic brightness and contrast percentage (default: 25)')
+    parser.add_argument('abc', type=int, nargs='?', default=15, help='automatic brightness and contrast percentage (default: 25)')
     parser.add_argument('-o','--output', type=str, help='output image filename')
     
     args = parser.parse_args()
