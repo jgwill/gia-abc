@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="astabc",
-    version="0.1.2",
+    version="0.1.3",
     author="Guillaume Descoteaux-Isabelle",
     description="A Python module for automatic brightness and contrast optimization",
     long_description=long_description,
