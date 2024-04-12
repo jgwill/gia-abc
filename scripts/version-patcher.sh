@@ -8,11 +8,12 @@ if [ -e "package.json" ];then
 	npm version patch && \
 		cversion=$(cat package.json | grep version | awk -F: '{ print $2 }' | sed 's/[", ]//g')
 
+
+else echo "Must executer $0 from current directory of package.json"
+fi
+
 	if [ "$cversion" == "" ]; then echo "bahhhh cversion has no value"
 	else
 		echo "Patching files for $cversion from $pversion"
 		for f in setup.py ;do sed -i 's/'$pversion'/'$cversion'/g' $f;done
 	fi
-else echo "Must executer $0 from current directory of package.json"
-fi
-
