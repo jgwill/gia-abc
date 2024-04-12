@@ -1,19 +1,20 @@
+#!/bin/bash
 
+# This bash script will bump the version in setup.py similar to npm version patch
 
-if [ -e "package.json" ];then 
+# Get the current version
+version=$(grep -Eo "[0-9]+\.[0-9]+\.[0-9]+" setup.py)
 
-	pversion=$(cat package.json | grep version | awk -F: '{ print $2 }' | sed 's/[", ]//g')
-	cversion=""
+# Split the version into an array
+IFS='.' read -r -a version_array <<< "$version"
 
-	npm version patch && \
-		cversion=$(cat package.json | grep version | awk -F: '{ print $2 }' | sed 's/[", ]//g')
+# Increment the patch version
+version_array[2]=$((version_array[2] + 1))
 
+# Join the array back into a string
+new_version="${version_array[0]}.${version_array[1]}.${version_array[2]}"
 
-else echo "Must executer $0 from current directory of package.json"
-fi
+# Replace the old version with the new version in setup.py
+sed -i "s/$version/$new_version/g" setup.py
 
-	if [ "$cversion" == "" ]; then echo "bahhhh cversion has no value"
-	else
-		echo "Patching files for $cversion from $pversion"
-		for f in setup.py ;do sed -i 's/'$pversion'/'$cversion'/g' $f;done
-	fi
+echo "Version bumped to $new_version"
