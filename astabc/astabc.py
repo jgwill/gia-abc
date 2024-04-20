@@ -53,10 +53,17 @@ def main():
     parser.add_argument('filename', type=str, help='input image filename')
     parser.add_argument('abc', type=int, nargs='?', default=15, help='automatic brightness and contrast percentage (default: 25)')
     parser.add_argument('-o','--output', type=str, help='output image filename')
+    #argument flag --feh to open the image with feh
+    parser.add_argument('--feh', action='store_true', help='open the image with feh')
+
     
     args = parser.parse_args()
     
     correct(args.filename, args.abc, args.output)
+    if args.feh:
+        import subprocess
+        subprocess.run(['feh', args.output])
+
 
 if __name__ == '__main__':
     main()
