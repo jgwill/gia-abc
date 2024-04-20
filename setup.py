@@ -13,7 +13,7 @@ setup(
     url="https://github.com/jgwill/gia-abc",
     packages=["astabc"],
     entry_points={
-        "console_scripts": ["astabc=astabc.astabc:main"],
+        "console_scripts": ["astabc=astabc.astabc:main","abc=astabc.astabc:main"],
     },
     install_requires=["opencv-python"],
     classifiers=[
