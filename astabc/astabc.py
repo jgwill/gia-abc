@@ -59,34 +59,49 @@ def main():
         if chk.isdigit():
             schema_one=False
     
-    parser = argparse.ArgumentParser(description='Image Brightness and Contrast Correction\nby Guillaume D. Isabelle, 2024\n')
+    descript = f"""
+    
+    Image Brightness and Contrast Correction\nby Guillaume D. Isabelle, 2024
+    """
+    parser = argparse.ArgumentParser(description=descript)
     
     if schema_one:
-        parser.add_argument('filename', type=str, help='input image filename')
-        parser.add_argument('abc', type=int, nargs='?', default=15, help='automatic brightness and contrast percentage (default: 15)')
-        parser.add_argument('-o','--output', type=str, help='output image filename')
+        parser.add_argument('filename', type=str, help='input image filename (or filenames as second arguments)')
+        parser.add_argument('abc', type=int, nargs='?', default=15, help='automatic brightness and contrast percentage (default: 15).  You can pass it as first argument for multiple files.')
+        parser.add_argument('-o','--output', type=str, help='output image filename.')
     else:
         parser.add_argument('abc', type=int, nargs='?', default=15, help='automatic brightness and contrast percentage (default: 15)')
-        parser.add_argument('filename', type=str, help='input image filename')
+        #parser.add_argument('filename', type=str, help='input image filename')
+        parser.add_argument('files', type=str, nargs='+', help='input image filenames')
     #argument flag --feh to open the image with feh
     parser.add_argument('--feh', action='store_true', help='open the image with feh')
 
     
     args = parser.parse_args()
     
-    filename = args.filename
-    abc_value = args.abc
     
     
     target_output = args.output if schema_one else ""
         
     
-    img, alpha, beta, outfile=correct(filename, abc_value, target_output)
-    if args.feh:
-        import subprocess
-        subprocess.run(['feh', outfile])
+    if schema_one:
+        filename = args.filename
+        abc_value = args.abc
+        img, alpha, beta, outfile=correct(filename, abc_value, target_output)
+        print("Brightness and contrast corrected image saved as", outfile)
+        if args.feh:
+            import subprocess
+            subprocess.run(['feh', outfile])
+    else:
+        abc_value = args.abc
+        filenames = args.files
+        for filename in filenames:
+            img, alpha, beta, outfile = correct(filename, abc_value, target_output)
+            print("Brightness and contrast corrected image saved as", outfile)
+            if args.feh:
+                subprocess.run(['feh', outfile])
+        
 
-    print("Brightness and contrast corrected image saved as", outfile)
     
 if __name__ == '__main__':
     main()
