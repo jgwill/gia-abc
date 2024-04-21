@@ -60,7 +60,13 @@ def main():
     
     args = parser.parse_args()
     
-    img, alpha, beta, outfile=correct(args.filename, args.abc, args.output)
+    filename = args.filename
+    abc_value = args.abc
+    
+    
+    target_output = args.output
+    
+    img, alpha, beta, outfile=correct(filename, abc_value, target_output)
     if args.feh:
         import subprocess
         subprocess.run(['feh', outfile])
