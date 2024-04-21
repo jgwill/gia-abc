@@ -34,6 +34,7 @@ def _automatic_brightness_and_contrast(image, clip_hist_percent=25):
     
     auto_result = cv2.convertScaleAbs(image, alpha=alpha, beta=beta)
     return (auto_result, alpha, beta)
+
 def correct(filename, abc=25, output_filename=None):
     img = _read_image(filename)
     img, alpha, beta = _automatic_brightness_and_contrast(img, abc)
@@ -45,7 +46,7 @@ def correct(filename, abc=25, output_filename=None):
     cv2.imwrite(new_filename, img)
     print("Brightness and contrast corrected image saved as", new_filename)
     
-    return img, alpha, beta
+    return img, alpha, beta, new_filename
 
 def main():
     parser = argparse.ArgumentParser(description='Image Brightness and Contrast Correction\nby Guillaume D. Isabelle, 2024\n')
@@ -59,10 +60,10 @@ def main():
     
     args = parser.parse_args()
     
-    correct(args.filename, args.abc, args.output)
+    img, alpha, beta, outfile=correct(args.filename, args.abc, args.output)
     if args.feh:
         import subprocess
-        subprocess.run(['feh', args.output])
+        subprocess.run(['feh', outfile])
 
 
 if __name__ == '__main__':
