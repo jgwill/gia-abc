@@ -44,16 +44,30 @@ def correct(filename, abc=25, output_filename=None):
     
     new_filename = output_filename if output_filename else filename.replace("." + file_extension, "_abc" + abc_fn_suffix + "." + file_extension)
     cv2.imwrite(new_filename, img)
-    print("Brightness and contrast corrected image saved as", new_filename)
+    
     
     return img, alpha, beta, new_filename
 
 def main():
+    import sys
+    #print process arguments with their id
+    
+    schema_one=True
+    if sys.argv and sys.argv[1]:
+        chk=sys.argv[1]
+        #if chk is a number, set schema_one to False
+        if chk.isdigit():
+            schema_one=False
+    
     parser = argparse.ArgumentParser(description='Image Brightness and Contrast Correction\nby Guillaume D. Isabelle, 2024\n')
     
-    parser.add_argument('filename', type=str, help='input image filename')
-    parser.add_argument('abc', type=int, nargs='?', default=15, help='automatic brightness and contrast percentage (default: 25)')
-    parser.add_argument('-o','--output', type=str, help='output image filename')
+    if schema_one:
+        parser.add_argument('filename', type=str, help='input image filename')
+        parser.add_argument('abc', type=int, nargs='?', default=15, help='automatic brightness and contrast percentage (default: 15)')
+        parser.add_argument('-o','--output', type=str, help='output image filename')
+    else:
+        parser.add_argument('abc', type=int, nargs='?', default=15, help='automatic brightness and contrast percentage (default: 15)')
+        parser.add_argument('filename', type=str, help='input image filename')
     #argument flag --feh to open the image with feh
     parser.add_argument('--feh', action='store_true', help='open the image with feh')
 
@@ -64,13 +78,15 @@ def main():
     abc_value = args.abc
     
     
-    target_output = args.output
+    target_output = args.output if schema_one else ""
+        
     
     img, alpha, beta, outfile=correct(filename, abc_value, target_output)
     if args.feh:
         import subprocess
         subprocess.run(['feh', outfile])
 
-
+    print("Brightness and contrast corrected image saved as", outfile)
+    
 if __name__ == '__main__':
     main()
