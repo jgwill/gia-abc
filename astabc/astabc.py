@@ -76,6 +76,8 @@ def main():
     #argument flag --feh to open the image with feh
     parser.add_argument('--feh', action='store_true', help='open the image with feh')
     parser.add_argument('-q','--quality', type=int, default=100, help='output image quality (default: 100)')
+    #add --pipe so the outputs is the filename only
+    parser.add_argument('-p','--pipe', action='store_true', help='output the filename only')
 
     
     args = parser.parse_args()
@@ -89,7 +91,7 @@ def main():
         filename = args.filename
         abc_value = args.abc
         img, alpha, beta, outfile=correct(filename, abc_value, target_output,qual=qual)
-        print("Brightness and contrast corrected image saved as", outfile)
+        print("Brightness and contrast corrected image saved as", outfile) if not args.pipe else print(outfile)
         if args.feh:
             import subprocess
             subprocess.run(['feh', outfile])
@@ -98,7 +100,7 @@ def main():
         filenames = args.files
         for filename in filenames:
             img, alpha, beta, outfile = correct(filename, abc_value, target_output,qual=qual)
-            print("Brightness and contrast corrected image saved as", outfile)
+            print("Brightness and contrast corrected image saved as", outfile) if not args.pipe else print(outfile)
             if args.feh:
                 subprocess.run(['feh', outfile])
         
