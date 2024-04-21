@@ -35,7 +35,7 @@ def _automatic_brightness_and_contrast(image, clip_hist_percent=25):
     auto_result = cv2.convertScaleAbs(image, alpha=alpha, beta=beta)
     return (auto_result, alpha, beta)
 
-def correct(filename, abc=25, output_filename=None):
+def correct(filename, abc=25, output_filename=None,qual = 100):
     img = _read_image(filename)
     img, alpha, beta = _automatic_brightness_and_contrast(img, abc)
     
@@ -43,8 +43,8 @@ def correct(filename, abc=25, output_filename=None):
     abc_fn_suffix = str(abc).zfill(2)
     
     new_filename = output_filename if output_filename else filename.replace("." + file_extension, "_abc" + abc_fn_suffix + "." + file_extension)
-    cv2.imwrite(new_filename, img)
     
+    cv2.imwrite(new_filename, img, [int(cv2.IMWRITE_JPEG_QUALITY), qual])
     
     return img, alpha, beta, new_filename
 
@@ -64,7 +64,7 @@ def main():
     Image Brightness and Contrast Correction\nby Guillaume D. Isabelle, 2024
     """
     parser = argparse.ArgumentParser(description=descript)
-    
+    #add quality argument
     if schema_one:
         parser.add_argument('filename', type=str, help='input image filename (or filenames as second arguments)')
         parser.add_argument('abc', type=int, nargs='?', default=15, help='automatic brightness and contrast percentage (default: 15).  You can pass it as first argument for multiple files.')
@@ -75,19 +75,20 @@ def main():
         parser.add_argument('files', type=str, nargs='+', help='input image filenames')
     #argument flag --feh to open the image with feh
     parser.add_argument('--feh', action='store_true', help='open the image with feh')
+    parser.add_argument('-q','--quality', type=int, default=100, help='output image quality (default: 100)')
 
     
     args = parser.parse_args()
     
     
-    
+    qual=args.quality
     target_output = args.output if schema_one else ""
         
     
     if schema_one:
         filename = args.filename
         abc_value = args.abc
-        img, alpha, beta, outfile=correct(filename, abc_value, target_output)
+        img, alpha, beta, outfile=correct(filename, abc_value, target_output,qual=qual)
         print("Brightness and contrast corrected image saved as", outfile)
         if args.feh:
             import subprocess
@@ -96,7 +97,7 @@ def main():
         abc_value = args.abc
         filenames = args.files
         for filename in filenames:
-            img, alpha, beta, outfile = correct(filename, abc_value, target_output)
+            img, alpha, beta, outfile = correct(filename, abc_value, target_output,qual=qual)
             print("Brightness and contrast corrected image saved as", outfile)
             if args.feh:
                 subprocess.run(['feh', outfile])
